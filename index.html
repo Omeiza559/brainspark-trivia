@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BrainSpark | Mobile Trivia & Knowledge Builder</title>
+    <meta name="description" content="Test your knowledge, unlock achievements, and master topics with interactive trivia, speed blitzes, and educational explanations.">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BrainSpark">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Confetti Particles Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <div id="app-root">
+
+        <!-- Top Navigation Bar (Desktop & Tablet) -->
+        <header class="navbar">
+            <div class="brand-logo">
+                <span class="brand-icon">⚡</span>
+                <span>BrainSpark</span>
+            </div>
+
+            <!-- Nav Tabs -->
+            <nav class="nav-links">
+                <button class="nav-tab active" data-target="home">🎮 Play</button>
+                <button class="nav-tab" data-target="flashcards">📚 Flashcards</button>
+                <button class="nav-tab" data-target="studio">🛠️ Quiz Studio</button>
+                <button class="nav-tab" data-target="badges">🏆 Badges</button>
+            </nav>
+
+            <!-- User Level & XP Bar -->
+            <div class="user-profile-bar">
+                <div class="stat-pill">
+                    <span id="user-level" class="level-badge">Lvl 1</span>
+                </div>
+                <div class="stat-pill">
+                    <span id="user-xp">0 XP</span>
+                </div>
+                <div class="stat-pill">
+                    <span id="user-streak">🔥 0</span>
+                </div>
+                <button id="sound-toggle" class="sound-toggle-btn">🔊 Sound ON</button>
+            </div>
+        </header>
+
+        <!-- ==================== SCREEN 1: HOME / SETUP ==================== -->
+        <main id="home-screen" class="screen-view active">
+            <div class="glass-panel">
+                <div class="hero-header">
+                    <h1 class="hero-title">Expand Your Knowledge</h1>
+                    <p class="hero-subtitle">Pick a topic, challenge your intellect, and learn fascinating facts!</p>
+                </div>
+
+                <!-- Category Grid -->
+                <div class="section-label">
+                    <span>📚</span> Select Topic Category
+                </div>
+                <div id="category-grid" class="category-grid">
+                    <!-- Dynamic Category Cards Inserted via JS -->
+                </div>
+
+                <!-- Mode & Difficulty Settings -->
+                <div class="config-row">
+                    <div class="mode-selector">
+                        <label class="section-label">⚡ Game Mode</label>
+                        <div class="radio-pill-group">
+                            <input type="radio" id="mode-classic" name="game-mode" value="classic" checked>
+                            <label for="mode-classic">Classic</label>
+
+                            <input type="radio" id="mode-blitz" name="game-mode" value="blitz">
+                            <label for="mode-blitz">Speed Blitz</label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="section-label">🎯 Difficulty</label>
+                        <select id="difficulty-select" class="select-box">
+                            <option value="all">All Difficulties</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Online OpenTriviaDB API Toggle -->
+                <div class="api-toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="online-api-toggle">
+                        <span class="slider"></span>
+                    </label>
+                    <div>
+                        <strong>Fetch Live Online Questions</strong>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Pull unlimited live trivia questions from OpenTriviaDB API</p>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button id="start-quiz-btn" class="primary-btn">
+                    <span>🚀 Start Trivia Session</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- ==================== SCREEN 2: GAMEPLAY ==================== -->
+        <main id="game-screen" class="screen-view">
+            <div class="glass-panel">
+                <!-- Header Stats inside game -->
+                <div class="game-header">
+                    <div class="quiz-progress-track">
+                        <div id="quiz-progress-fill" class="quiz-progress-fill"></div>
+                    </div>
+                    <div id="combo-badge" class="combo-pill" style="display: none;">🔥 2x Combo!</div>
+                    <div id="live-score" style="font-family: var(--font-heading); font-weight: 700; margin-right: 15px;">Score: 0</div>
+                    <div id="timer-display" class="timer-badge">15</div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="question-card">
+                    <span id="question-category-tag" class="category-tag">SCIENCE • MEDIUM</span>
+                    <h2 id="question-text" class="question-text">Loading trivia question...</h2>
+                </div>
+
+                <!-- Multiple Choice Options -->
+                <div id="options-container" class="options-grid">
+                    <!-- Dynamic Options Inserted via JS -->
+                </div>
+
+                <!-- Educational Insight Card -->
+                <div id="explanation-card" class="explanation-box" style="display: none;">
+                    <div id="explanation-status" class="explanation-status">🎉 Correct!</div>
+                    <p id="explanation-body" class="explanation-body">Insight breakdown goes here...</p>
+                </div>
+
+                <!-- Next Button -->
+                <button id="next-q-btn" class="primary-btn" style="display: none;">
+                    <span>Next Question ➡️</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- ==================== SCREEN 3: SUMMARY ==================== -->
+        <main id="summary-screen" class="screen-view">
+            <div class="glass-panel summary-card">
+                <div class="trophy-icon">🏆</div>
+                <h2 class="hero-title">Session Complete!</h2>
+                <p id="summary-message" class="hero-subtitle">You did an amazing job expanding your mind today!</p>
+
+                <div id="summary-score" class="summary-score">0 Points</div>
+
+                <div class="summary-stats-grid">
+                    <div class="stat-card">
+                        <div id="summary-accuracy" class="stat-card-val">0%</div>
+                        <div class="stat-card-label">Accuracy Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="summary-xp" class="stat-card-val">+0 XP</div>
+                        <div class="stat-card-label">Earned Experience</div>
+                    </div>
+                </div>
+
+                <button id="restart-quiz-btn" class="primary-btn">
+                    <span>Play Another Round 🔄</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- ==================== SCREEN 4: FLASHCARDS ==================== -->
+        <main id="flashcards-screen" class="screen-view">
+            <div class="glass-panel">
+                <div class="hero-header">
+                    <h2 class="hero-title">Flashcard Mastery</h2>
+                    <p class="hero-subtitle">Review missed questions to strengthen memory and build long-term retention.</p>
+                </div>
+                <div id="flashcards-container" class="flashcards-grid">
+                    <!-- Dynamic Flashcards Inserted via JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== SCREEN 5: CUSTOM QUIZ STUDIO ==================== -->
+        <main id="studio-screen" class="screen-view">
+            <div class="glass-panel">
+                <div class="hero-header">
+                    <h2 class="hero-title">Custom Quiz Studio</h2>
+                    <p class="hero-subtitle">Create custom questions and study packs for yourself or friends!</p>
+                </div>
+
+                <form id="custom-quiz-form">
+                    <div class="form-group">
+                        <label>Quiz Title / Pack Name</label>
+                        <input type="text" id="custom-title" class="form-input" placeholder="e.g. European Capitals or Biology 101" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Question Text</label>
+                        <textarea id="custom-q-text" class="form-textarea" placeholder="Enter your custom trivia question..." required></textarea>
+                    </div>
+
+                    <div class="config-row">
+                        <div class="form-group">
+                            <label>Option A</label>
+                            <input type="text" id="custom-opt-a" class="form-input" placeholder="Option A" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Option B</label>
+                            <input type="text" id="custom-opt-b" class="form-input" placeholder="Option B" required>
+                        </div>
+                    </div>
+
+                    <div class="config-row">
+                        <div class="form-group">
+                            <label>Option C</label>
+                            <input type="text" id="custom-opt-c" class="form-input" placeholder="Option C">
+                        </div>
+                        <div class="form-group">
+                            <label>Option D</label>
+                            <input type="text" id="custom-opt-d" class="form-input" placeholder="Option D">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Correct Option</label>
+                        <select id="custom-correct-idx" class="select-box">
+                            <option value="0">Option A is Correct</option>
+                            <option value="1">Option B is Correct</option>
+                            <option value="2">Option C is Correct</option>
+                            <option value="3">Option D is Correct</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Educational Explanation ("Did You Know?")</label>
+                        <textarea id="custom-explanation" class="form-textarea" placeholder="Explain why this answer is correct..."></textarea>
+                    </div>
+
+                    <button type="submit" class="primary-btn">
+                        <span>Save Custom Question ✨</span>
+                    </button>
+                </form>
+
+                <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 32px 0;">
+
+                <div class="section-label">📦 Your Custom Quizzes</div>
+                <div id="custom-quizzes-list">
+                    <!-- Dynamic Custom Quizzes List -->
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== SCREEN 6: BADGES ==================== -->
+        <main id="badges-screen" class="screen-view">
+            <div class="glass-panel">
+                <div class="hero-header">
+                    <h2 class="hero-title">Achievements & Badges</h2>
+                    <p class="hero-subtitle">Unlock badges as you level up, maintain streaks, and master topics.</p>
+                </div>
+                <div id="badges-grid" class="badges-grid">
+                    <!-- Dynamic Badges Grid Inserted via JS -->
+                </div>
+            </div>
+        </main>
+
+        <!-- ==================== MOBILE BOTTOM NAVIGATION BAR ==================== -->
+        <nav class="mobile-bottom-bar">
+            <button class="mobile-nav-item active" data-target="home">
+                <span class="nav-icon">🎮</span>
+                <span class="nav-label">Play</span>
+            </button>
+            <button class="mobile-nav-item" data-target="flashcards">
+                <span class="nav-icon">📚</span>
+                <span class="nav-label">Study</span>
+            </button>
+            <button class="mobile-nav-item" data-target="studio">
+                <span class="nav-icon">🛠️</span>
+                <span class="nav-label">Studio</span>
+            </button>
+            <button class="mobile-nav-item" data-target="badges">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">Badges</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Application Script Entry Point -->
+    <script type="module" src="js/app.js"></script>
+    <script>
+        // Register Service Worker for offline PWA installation
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => {
+                    console.log('SW registration failed:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
