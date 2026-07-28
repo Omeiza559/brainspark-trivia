@@ -1,18 +1,68 @@
 {
+  "id": "brainspark-trivia",
   "name": "BrainSpark Trivia & Knowledge Builder",
   "short_name": "BrainSpark",
-  "description": "Interactive mobile trivia app to test knowledge and learn fascinating facts.",
+  "description": "Interactive mobile trivia app to test knowledge, unlock achievements, and learn fascinating facts.",
+  "lang": "en-US",
+  "dir": "ltr",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#090d16",
   "theme_color": "#6366f1",
   "orientation": "portrait-primary",
+  "categories": ["education", "games", "entertainment"],
   "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "icon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Classic Mode",
+      "short_name": "Play",
+      "description": "Start a new trivia round immediately",
+      "url": "./index.html?mode=classic",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Flashcard Study",
+      "short_name": "Study",
+      "description": "Review missed trivia questions",
+      "url": "./index.html?mode=flashcards",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "BrainSpark Trivia Gameplay View"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "BrainSpark Trivia Dashboard"
     }
   ]
 }

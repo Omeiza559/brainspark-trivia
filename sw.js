@@ -3,13 +3,15 @@
  * Enables 100% offline play and caching on Android & iOS mobile devices.
  */
 
-const CACHE_NAME = 'brainspark-v1';
+const CACHE_NAME = 'brainspark-v2';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './styles.css',
     './manifest.json',
     './icon.svg',
+    './icon-192.png',
+    './icon-512.png',
     './js/app.js',
     './js/questions.js',
     './js/audio.js',
@@ -47,7 +49,6 @@ self.addEventListener('fetch', (event) => {
                 return cachedResponse;
             }
             return fetch(event.request).catch(() => {
-                // Fallback for offline network requests
                 if (event.request.mode === 'navigate') {
                     return caches.match('./index.html');
                 }
